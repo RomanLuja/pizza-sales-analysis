@@ -1,36 +1,3 @@
--- ZWISCHENPROJEKT: UMSATZ EINER PIZZERIA
-
-CREATE VIEW view_orders AS
-SELECT
-CAST(order_id AS INTEGER) AS order_id,
-DATE(date) AS date,
-TIME(time) AS time
-FROM orders;
-
-CREATE VIEW view_order_details AS
-SELECT
-order_details_id,
-    	order_id,
-    	CAST(pizza_id AS INTEGER) AS pizza_id,
-    	quantity    
-FROM order_details;
-
-CREATE VIEW view_pizzas AS
-SELECT
-    	CAST(pizza_id AS INTEGER) AS pizza_id,
-    	CAST(pizza_type_id AS INTEGER) AS pizza_type_id,
-    	size,
-   	 price
-FROM pizzas;
-
-CREATE VIEW view_pizza_types AS
-SELECT
-    	CAST(pizza_type_id AS INTEGER) AS pizza_type_id,
-   	 name,
-   	 category,
-    	ingredients
-FROM pizza_types;
-
 -- Aufgabe 3.1 Kennzahlen des Jahres: Umsatz, Anzahl der Bestellungen, verkaufte Pizzen, durchschnittlicher Bestellwert, durchschnittliche Pizzen pro Bestellung. Pizzen unter Berücksichtigung von quantity zählen.
 
 SELECT 
@@ -45,16 +12,17 @@ JOIN order_details AS od
 
 -- Fazit: 
 -- Im Jahr 2015 erzielte die Pizzeria einen Umsatz von 817.860,05 $, bearbeitete 21.350 Bestellungen und verkaufte 49.574 Pizzen. Der durchschnittliche Bestellwert betrug 38,31 $, im Durchschnitt wurden 2 Pizzen pro Bestellung verkauft. 
+
 -- Aufgabe 3.2  Entwicklung nach Monaten: Umsatz und Bestellungen. Welcher Monat ist am stärksten, welcher am schwächsten? ★ Veränderung zum Vormonat in Prozent.
 
 WITH monthly AS (
     SELECT
-        strftime('%m', vo.date) AS month,
-        SUM(vp.price * vod.quantity)              AS revenue,
-        COUNT(DISTINCT vod.order_id)             AS orders_cnt
-    FROM view_orders AS vo
-    JOIN view_order_details AS vod USING (order_id)
-    JOIN view_pizzas AS vp USING (pizza_id)
+        strftime('%m', o.date) AS month,
+        SUM(p.price * od.quantity)              AS revenue,
+        COUNT(DISTINCT od.order_id)             AS orders_cnt
+    FROM orders AS o
+    JOIN order_details AS od USING (order_id)
+    JOIN pizzas AS p USING (pizza_id)
     GROUP BY month
 )
 SELECT
@@ -76,17 +44,18 @@ ORDER BY month;
 
 -- Fazit:
 -- Im Jahr 2015 schwankte der Umsatz. Der stärkste Monat war Juli mit 6.931.893,6, der schwächste Oktober mit 6.128.538,9. Das stärkste Umsatzwachstum gegenüber dem Vormonat wurde im November mit +9,9 % erreicht.
+
+
 -- Aufgabe 3.3 Auslastung nach Wochentagen und Uhrzeiten: Wann ist Stoßzeit, wann ist es ruhig? Wie viele Bestellungen gehen durchschnittlich an einem Montag, einem Dienstag usw. Ein?
 
 -- Anzahl der Bestellungen für jeden Kalendertag 
-
 WITH daily_orders AS (
     SELECT
-        vo.date,
-        strftime('%w', vo.date) AS weekday_num,
-        COUNT(DISTINCT vo.order_id) AS orders_cnt
-    FROM view_orders AS vo
-    GROUP BY vo.date
+        o.date,
+        strftime('%w', o.date) AS weekday_num,
+        COUNT(DISTINCT o.order_id) AS orders_cnt
+    FROM orders AS vo
+    GROUP BY o.date
 )
 SELECT
     CASE weekday_num
@@ -104,12 +73,11 @@ GROUP BY weekday_num
 ORDER BY weekday_num;
 
 -- Durchschnittliche Anzahl der Bestellungen pro Wochentag 
-
 SELECT
-    strftime('%H', vo.time) AS hour,
-    COUNT(DISTINCT vo.order_id) AS orders_cnt
-FROM view_orders AS vo
-GROUP BY strftime('%H', vo.time)
+    strftime('%H', o.time) AS hour,
+    COUNT(DISTINCT o.order_id) AS orders_cnt
+FROM orders AS vo
+GROUP BY strftime('%H', o.time)
 ORDER BY orders_cnt DESC;
 
 -- Fazit
@@ -325,59 +293,3 @@ WHERE strftime('%w', o.date) = '0'       -- Sonntag
 
 -- Fazit:
 -- Eine Aktion bietet sich am Sonntag um 22:00 Uhr an. Als Aktionsprodukt werden Classic-Pizzen in der Größe L vorgeschlagen, da Classic mit 26,9 % den höchsten Umsatzanteil der Kategorien und L mit 45,9 % den höchsten Umsatzanteil der Größen erzielt. Im gewählten Zeitfenster beträgt der aktuelle Umsatz 175,25 $. Bei einer Umsatzsteigerung von 10 % würde der Umsatz auf 192,78 $ steigen. Das entspricht einem zusätzlichen Umsatz von 17,53 $. 
-
--- Auswahl sales_lines für Tableau
-
-SELECT
-    o.order_id AS order_id,
-    o.date AS order_date,
-    o.time AS order_time,
-    strftime('%m', o.date) AS month,
-
-    CASE strftime('%w', o.date)
-        WHEN '0' THEN 'Sonntag'
-        WHEN '1' THEN 'Montag'
-        WHEN '2' THEN 'Dienstag'
-        WHEN '3' THEN 'Mittwoch'
-        WHEN '4' THEN 'Donnerstag'
-        WHEN '5' THEN 'Freitag'
-        WHEN '6' THEN 'Samstag'
-    END AS weekday,
-
-    strftime('%H', o.time) AS hour,
-
-    pt.name AS pizza_name,
-    pt.category AS category,
-    p.size AS size,
-    p.price AS unit_price,
-    od.quantity AS quantity,
-    p.price * od.quantity AS revenue
-
-FROM orders AS o
-JOIN order_details AS od
-    ON o.order_id = od.order_id
-JOIN pizzas AS p
-    ON od.pizza_id = p.pizza_id
-JOIN pizza_types AS pt
-    ON p.pizza_type_id = pt.pizza_type_id;
-
--- Kontrolle: sales_lines muss genauso viele Zeilen haben wie order_details.
-
-SELECT COUNT(*) AS sales_lines_count
-FROM (
-    SELECT
-        o.order_id
-    FROM orders AS o
-    JOIN order_details AS od
-        ON o.order_id = od.order_id
-    JOIN pizzas AS p
-        ON od.pizza_id = p.pizza_id
-    JOIN pizza_types AS pt
-        ON p.pizza_type_id = pt.pizza_type_id
-);
-
--- Ergebnis: Die Anzahl der Zeilen in sales_lines entspricht der Anzahl der Zeilen in order_details.
--- sales_lines: 48.620 Zeilen
--- order_details: 48.620 Zeilen
-
-
