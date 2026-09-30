@@ -54,7 +54,7 @@ WITH daily_orders AS (
         o.date,
         strftime('%w', o.date) AS weekday_num,
         COUNT(DISTINCT o.order_id) AS orders_cnt
-    FROM orders AS vo
+    FROM orders AS o
     GROUP BY o.date
 )
 SELECT
@@ -76,7 +76,7 @@ ORDER BY weekday_num;
 SELECT
     strftime('%H', o.time) AS hour,
     COUNT(DISTINCT o.order_id) AS orders_cnt
-FROM orders AS vo
+FROM orders AS o
 GROUP BY strftime('%H', o.time)
 ORDER BY orders_cnt DESC;
 
