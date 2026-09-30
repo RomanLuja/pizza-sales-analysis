@@ -44,8 +44,8 @@ JOIN order_details AS od
  	ON p.pizza_id = od.pizza_id;
 
 -- Fazit: 
-Im Jahr 2015 erzielte die Pizzeria einen Umsatz von 817.860,05 $, bearbeitete 21.350 Bestellungen und verkaufte 49.574 Pizzen. Der durchschnittliche Bestellwert betrug 38,31 $, im Durchschnitt wurden 2 Pizzen pro Bestellung verkauft. 
-Aufgabe 3.2  Entwicklung nach Monaten: Umsatz und Bestellungen. Welcher Monat ist am stärksten, welcher am schwächsten? ★ Veränderung zum Vormonat in Prozent.
+-- Im Jahr 2015 erzielte die Pizzeria einen Umsatz von 817.860,05 $, bearbeitete 21.350 Bestellungen und verkaufte 49.574 Pizzen. Der durchschnittliche Bestellwert betrug 38,31 $, im Durchschnitt wurden 2 Pizzen pro Bestellung verkauft. 
+-- Aufgabe 3.2  Entwicklung nach Monaten: Umsatz und Bestellungen. Welcher Monat ist am stärksten, welcher am schwächsten? ★ Veränderung zum Vormonat in Prozent.
 
 WITH monthly AS (
     SELECT
@@ -74,26 +74,9 @@ SELECT
 FROM monthly
 ORDER BY month;
 
-Fazit:
-Im Jahr 2015 schwankte der Umsatz. Der stärkste Monat war Juli mit 6.931.893,6, der schwächste Oktober mit 6.128.538,9. Das stärkste Umsatzwachstum gegenüber dem Vormonat wurde im November mit +9,9 % erreicht. 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Aufgabe 3.3 Auslastung nach Wochentagen und Uhrzeiten: Wann ist Stoßzeit, wann ist es ruhig? Wie viele Bestellungen gehen durchschnittlich an einem Montag, einem Dienstag usw. Ein?
+-- Fazit:
+-- Im Jahr 2015 schwankte der Umsatz. Der stärkste Monat war Juli mit 6.931.893,6, der schwächste Oktober mit 6.128.538,9. Das stärkste Umsatzwachstum gegenüber dem Vormonat wurde im November mit +9,9 % erreicht.
+-- Aufgabe 3.3 Auslastung nach Wochentagen und Uhrzeiten: Wann ist Stoßzeit, wann ist es ruhig? Wie viele Bestellungen gehen durchschnittlich an einem Montag, einem Dienstag usw. Ein?
 
 -- Anzahl der Bestellungen für jeden Kalendertag 
 
@@ -129,11 +112,12 @@ FROM view_orders AS vo
 GROUP BY strftime('%H', vo.time)
 ORDER BY orders_cnt DESC;
 
+-- Fazit
+-- Die durchschnittliche Anzahl der Bestellungen pro Tag unterscheidet sich je nach Wochentag. Am Freitag werden mit durchschnittlich 77,8 Bestellungen pro Freitag die meisten Bestellungen aufgegeben, am Sonntag mit 50,5 Bestellungen die wenigsten.
+-- Im Tagesverlauf steigt die Zahl der Bestellungen ab 11:00 Uhr deutlich an: Um 11:00 Uhr wurden im gesamten Jahr 1.231 Bestellungen erfasst, und um 12:00 Uhr wird mit 2.520 Bestellungen der Höchstwert erreicht. Nach 12:00 Uhr geht die Nachfrage allmählich zurück, bleibt aber weiterhin hoch: Um 13:00 Uhr wurden 2.455 Bestellungen, um 17:00 Uhr 2.336 und um 18:00 Uhr nochmals 2.399 Bestellungen erfasst. Nach 18:00 Uhr nimmt die Anzahl der Bestellungen deutlich ab und liegt um 23:00 Uhr nur noch bei 28 Bestellungen im gesamten Jahr.
+ 
+-- Aufgabe 3.4 Bestseller und Ladenhüter: Top 5 und letzte 5 Pizzen nach Umsatz und nach Menge (auf Ebene der Pizzasorte, alle Größen zusammen). Stimmen die Listen überein?
 
-Fazit
-Die durchschnittliche Anzahl der Bestellungen pro Tag unterscheidet sich je nach Wochentag. Am Freitag werden mit durchschnittlich 77,8 Bestellungen pro Freitag die meisten Bestellungen aufgegeben, am Sonntag mit 50,5 Bestellungen die wenigsten.
-Im Tagesverlauf steigt die Zahl der Bestellungen ab 11:00 Uhr deutlich an: Um 11:00 Uhr wurden im gesamten Jahr 1.231 Bestellungen erfasst, und um 12:00 Uhr wird mit 2.520 Bestellungen der Höchstwert erreicht. Nach 12:00 Uhr geht die Nachfrage allmählich zurück, bleibt aber weiterhin hoch: Um 13:00 Uhr wurden 2.455 Bestellungen, um 17:00 Uhr 2.336 und um 18:00 Uhr nochmals 2.399 Bestellungen erfasst. Nach 18:00 Uhr nimmt die Anzahl der Bestellungen deutlich ab und liegt um 23:00 Uhr nur noch bei 28 Bestellungen im gesamten Jahr.
-Aufgabe 3.4 Bestseller und Ladenhüter: Top 5 und letzte 5 Pizzen nach Umsatz und nach Menge (auf Ebene der Pizzasorte, alle Größen zusammen). Stimmen die Listen überein?
 WITH pizza_sales AS (
     SELECT
         pt.name AS pizza_name,
@@ -181,12 +165,12 @@ SELECT * FROM (
     LIMIT 5
 );
 
+-- Fazit:
+-- Die Listen nach Umsatz und Verkaufsmenge stimmen teilweise überein. Bei den Top-5-Pizzen überschneiden sich 3 von 5 Pizzen: Classic Deluxe, Barbecue Chicken und Thai Chicken. Auch bei den letzten 5 Pizzen gibt es 3 gemeinsame Pizzen: Brie Carre, Mediterranean und Spinach Supreme. Somit gibt es einen deutlichen Zusammenhang zwischen Verkaufsmenge und Umsatz, aber die Listen sind nicht vollständig identisch. 
 
-Fazit: Die Listen nach Umsatz und Verkaufsmenge stimmen teilweise überein. Bei den Top-5-Pizzen überschneiden sich 3 von 5 Pizzen: Classic Deluxe, Barbecue Chicken und Thai Chicken. Auch bei den letzten 5 Pizzen gibt es 3 gemeinsame Pizzen: Brie Carre, Mediterranean und Spinach Supreme. Somit gibt es einen deutlichen Zusammenhang zwischen Verkaufsmenge und Umsatz, aber die Listen sind nicht vollständig identisch. 
+-- Aufgabe 3.5 Kategorien und Größen: Umsatzanteil jeder Kategorie und jeder Größe. Welche Größen verkaufen sich am besten?
 
-Aufgabe 3.5 Kategorien und Größen: Umsatzanteil jeder Kategorie und jeder Größe. Welche Größen verkaufen sich am besten?
-
--Umsatzanteil nach Kategorien 
+-- Umsatzanteil nach Kategorien 
 
 SELECT
     pt.category,
@@ -204,7 +188,7 @@ JOIN pizza_types AS pt
 GROUP BY pt.category
 ORDER BY revenue DESC;
 
--Umsatzanteil nach Pizzagröße 
+-- Umsatzanteil nach Pizzagröße 
 
 SELECT
     p.size,
@@ -220,11 +204,13 @@ JOIN pizzas AS p
 GROUP BY p.size
 ORDER BY revenue DESC;
 
-Fazit:
-Die Umsätze verteilen sich relativ gleichmäßig auf die vier Hauptkategorien. Den größten Umsatz erzielt die Kategorie Classic mit 26,9 %, gefolgt von Supreme mit 25,5 %, Chicken mit 24,0 % und Veggie mit 23,7 %.
-Bei den Größen ist ein deutlicher Unterschied zu erkennen. L-Pizzen erzielen mit 45,9 % den höchsten Umsatzanteil, gefolgt von M mit 30,5 % und S mit 21,8 %. Die Größen XL und XXL spielen mit zusammen nur 1,8 % der Umsätze eine deutlich geringere Rolle.
-Die Größe L wird somit mit großem Abstand am besten verkauft bzw. erzielt den größten Umsatzanteil.
-Aufgabe 3.6 Kandidaten für die Streichung: Welche Pizzasorten (alle Größen zusammen) haben den kleinsten Umsatzanteil und die geringsten Verkäufe? Begründen Sie, welche 3–5 Positionen wegfallen können und wie viel Umsatz betroffen ist. ★ Kumulierter Umsatzanteil.
+-- Fazit:
+-- Die Umsätze verteilen sich relativ gleichmäßig auf die vier Hauptkategorien. Den größten Umsatz erzielt die Kategorie Classic mit 26,9 %, gefolgt von Supreme mit 25,5 %, Chicken mit 24,0 % und Veggie mit 23,7 %.
+-- Bei den Größen ist ein deutlicher Unterschied zu erkennen. L-Pizzen erzielen mit 45,9 % den höchsten Umsatzanteil, gefolgt von M mit 30,5 % und S mit 21,8 %. Die Größen XL und XXL spielen mit zusammen nur 1,8 % der Umsätze eine deutlich geringere Rolle.
+-- Die Größe L wird somit mit großem Abstand am besten verkauft bzw. erzielt den größten Umsatzanteil.
+
+-- Aufgabe 3.6 Kandidaten für die Streichung: Welche Pizzasorten (alle Größen zusammen) haben den kleinsten Umsatzanteil und die geringsten Verkäufe? Begründen Sie, welche 3–5 Positionen wegfallen können und wie viel Umsatz betroffen ist. ★ Kumulierter Umsatzanteil.
+
 WITH pizza_sales AS (
     SELECT
         pt.name AS pizza_name,
@@ -256,14 +242,10 @@ SELECT
 FROM pizza_sales
 ORDER BY revenue ASC;
 
-Fazit:
-Die schwächsten Positionen nach Umsatz und Verkaufsmenge sind vor allem The Brie Carre Pizza, The Spinach Supreme Pizza und The Mediterranean Pizza. Zusammen erzielen diese drei Pizzen 42.226,75 $ Umsatz, was einem Anteil von 4,99 % des Gesamtumsatzes entspricht. Aufgrund der niedrigen Verkaufszahlen und des geringen Umsatzanteils können diese drei Pizzen als Kandidaten für eine Entfernung aus dem Menü betrachtet werden. 
+-- Fazit:
+-- Die schwächsten Positionen nach Umsatz und Verkaufsmenge sind vor allem The Brie Carre Pizza, The Spinach Supreme Pizza und The Mediterranean Pizza. Zusammen erzielen diese drei Pizzen 42.226,75 $ Umsatz, was einem Anteil von 4,99 % des Gesamtumsatzes entspricht. Aufgrund der niedrigen Verkaufszahlen und des geringen Umsatzanteils können diese drei Pizzen als Kandidaten für eine Entfernung aus dem Menü betrachtet werden. 
 
-
-
-
-
-Aufgabe 3.7 Große Bestellungen: Welcher Anteil der Bestellungen enthält 4 oder mehr Pizzen (Summe von quantity je Bestellung) und wie viel Umsatz bringen sie? Lohnt sich ein eigenes Angebot für Firmen?
+-- Aufgabe 3.7 Große Bestellungen: Welcher Anteil der Bestellungen enthält 4 oder mehr Pizzen (Summe von quantity je Bestellung) und wie viel Umsatz bringen sie? Lohnt sich ein eigenes Angebot für Firmen?
  
 WITH order_sales AS (
     SELECT
@@ -299,11 +281,10 @@ GROUP BY
     END
 ORDER BY pizzas_count;
 
+-- Fazit:
+-- Bestellungen mit 4 oder mehr Pizzen machen 18,2 % aller Bestellungen aus, generieren aber 39,4 % des Gesamtumsatzes. Damit haben Großbestellungen eine deutlich höhere Bedeutung für den Umsatz. Ein separates Angebot für Gruppen oder Firmen kann daher sinnvoll sein, insbesondere um diese Bestellungen gezielt zu fördern. 
 
-Fazit:
-Bestellungen mit 4 oder mehr Pizzen machen 18,2 % aller Bestellungen aus, generieren aber 39,4 % des Gesamtumsatzes. Damit haben Großbestellungen eine deutlich höhere Bedeutung für den Umsatz. Ein separates Angebot für Gruppen oder Firmen kann daher sinnvoll sein, insbesondere um diese Bestellungen gezielt zu fördern. 
-
-Aufgabe 3.8 Aktion: An welchen Wochentagen und zu welchen Uhrzeiten lohnt sie sich? Schlagen Sie eine konkrete Aktion vor und schätzen Sie das Potenzial: Wie hoch ist der aktuelle Umsatz in diesem Zeitfenster und was brächte ein Plus von 10 %?
+-- Aufgabe 3.8 Aktion: An welchen Wochentagen und zu welchen Uhrzeiten lohnt sie sich? Schlagen Sie eine konkrete Aktion vor und schätzen Sie das Potenzial: Wie hoch ist der aktuelle Umsatz in diesem Zeitfenster und was brächte ein Plus von 10 %?
 
 SELECT
     'Sonntag' AS weekday,
@@ -342,10 +323,10 @@ WHERE strftime('%w', o.date) = '0'       -- Sonntag
   AND pt.category = 'Classic'            -- Aktionskategorie
   AND p.size = 'L';                      -- Aktionsgröße
 
-Fazit:
-Eine Aktion bietet sich am Sonntag um 22:00 Uhr an. Als Aktionsprodukt werden Classic-Pizzen in der Größe L vorgeschlagen, da Classic mit 26,9 % den höchsten Umsatzanteil der Kategorien und L mit 45,9 % den höchsten Umsatzanteil der Größen erzielt. Im gewählten Zeitfenster beträgt der aktuelle Umsatz 175,25 $. Bei einer Umsatzsteigerung von 10 % würde der Umsatz auf 192,78 $ steigen. Das entspricht einem zusätzlichen Umsatz von 17,53 $. 
+-- Fazit:
+-- Eine Aktion bietet sich am Sonntag um 22:00 Uhr an. Als Aktionsprodukt werden Classic-Pizzen in der Größe L vorgeschlagen, da Classic mit 26,9 % den höchsten Umsatzanteil der Kategorien und L mit 45,9 % den höchsten Umsatzanteil der Größen erzielt. Im gewählten Zeitfenster beträgt der aktuelle Umsatz 175,25 $. Bei einer Umsatzsteigerung von 10 % würde der Umsatz auf 192,78 $ steigen. Das entspricht einem zusätzlichen Umsatz von 17,53 $. 
 
-Auswahl sales_lines für Tableau
+-- Auswahl sales_lines für Tableau
 
 SELECT
     o.order_id AS order_id,
@@ -380,7 +361,7 @@ JOIN pizzas AS p
 JOIN pizza_types AS pt
     ON p.pizza_type_id = pt.pizza_type_id;
 
-Kontrolle: sales_lines muss genauso viele Zeilen haben wie order_details.
+-- Kontrolle: sales_lines muss genauso viele Zeilen haben wie order_details.
 
 SELECT COUNT(*) AS sales_lines_count
 FROM (
@@ -395,8 +376,8 @@ FROM (
         ON p.pizza_type_id = pt.pizza_type_id
 );
 
-Ergebnis: Die Anzahl der Zeilen in sales_lines entspricht der Anzahl der Zeilen in order_details.
-sales_lines: 48.620 Zeilen
-order_details: 48.620 Zeilen
+-- Ergebnis: Die Anzahl der Zeilen in sales_lines entspricht der Anzahl der Zeilen in order_details.
+-- sales_lines: 48.620 Zeilen
+-- order_details: 48.620 Zeilen
 
 
